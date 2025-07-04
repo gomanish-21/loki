@@ -1,0 +1,121 @@
+version: "3.8"
+
+services:
+  # MongoDB Service (Production)
+  mongodb:
+    image: mongo:6.0
+    container_name: formatter-mongodb-prod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password123}
+      MONGO_INITDB_DATABASE: formatter_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-backup:/backup
+    networks:
+      - formatter-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    command:
+      ["mongod", "--auth", "--bind_ip_all", "--wiredTigerCacheSizeGB", "1"]
+    ulimits:
+      nproc: 64000
+      nofile:
+        soft: 64000
+        hard: 64000
+
+  # FastAPI Application (Production)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: formatter-app-prod
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/formatter_db?authSource=admin
+      - PYTHONPATH=/app
+      - ENVIRONMENT=production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - formatter-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+        reservations:
+          memory: 256M
+          cpus: "0.25"
+
+  # Nginx Reverse Proxy (Production)
+  nginx:
+    image: nginx:alpine
+    container_name: formatter-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - formatter-network
+
+  # MongoDB Backup Service (Optional)
+  mongo-backup:
+    image: mongo:6.0
+    container_name: formatter-mongo-backup
+    restart: "no"
+    environment:
+      MONGO_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/formatter_db?authSource=admin
+    volumes:
+      - ./mongo-backup:/backup
+    networks:
+      - formatter-network
+    command: >
+      sh -c "
+        while true; do
+          echo 'Starting MongoDB backup...'
+          mongodump --uri='$$MONGO_URI' --out=/backup/$$(date +%Y%m%d_%H%M%S)
+          echo 'Backup completed'
+          sleep 86400
+        done
+      "
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  formatter-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

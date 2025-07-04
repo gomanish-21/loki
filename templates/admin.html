@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Loki</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/admin.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <div class="header-left">
+            <button class="back-btn" onclick="navigateTo('/')">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+          </div>
+          <div class="header-center">
+            <h1><i class="fas fa-cog"></i> Admin Panel</h1>
+            <p>Manage Information Documents</p>
+          </div>
+          <div class="header-right">
+            <button class="add-btn" onclick="showAddDocumentModal()">
+              <i class="fas fa-plus"></i> Add Document
+            </button>
+            <button
+              class="add-btn"
+              id="logout-btn"
+              style="
+                background: linear-gradient(135deg, #f56565, #e53e3e);
+                margin-left: 10px;
+                display: none;
+              "
+              onclick="logoutAdmin()"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="admin-controls">
+          <div class="search-box">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search documents..."
+              onkeyup="searchDocuments()"
+            />
+            <i class="fas fa-search"></i>
+          </div>
+          <div class="filter-controls">
+            <select id="category-filter" onchange="filterDocuments()">
+              <option value="">All Categories</option>
+            </select>
+            <select id="status-filter" onchange="filterDocuments()">
+              <option value="">All Status</option>
+              <option value="true">Published</option>
+              <option value="false">Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="documents-table-container">
+          <table class="documents-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Updated</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="documents-tbody">
+              <tr>
+                <td colspan="6" class="loading">Loading documents...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Add/Edit Document Modal -->
+    <div id="document-modal" class="modal">
+      <div class="modal-content large">
+        <div class="modal-header">
+          <h2 id="modal-title">Add New Document</h2>
+          <button class="close-btn" onclick="closeDocumentModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="document-form" onsubmit="saveDocument(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" id="title" name="title" required />
+              </div>
+              <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" required>
+                  <option value="">Select Category</option>
+                  <option value="Tutorials">Tutorials</option>
+                  <option value="Guidelines">Guidelines</option>
+                  <option value="Performance">Performance</option>
+                  <option value="Troubleshooting">Troubleshooting</option>
+                  <option value="Updates">Updates</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="author">Author *</label>
+                <input type="text" id="author" name="author" required />
+              </div>
+              <div class="form-group">
+                <label for="tags">Tags (comma separated)</label>
+                <input
+                  type="text"
+                  id="tags"
+                  name="tags"
+                  placeholder="sql, database, tutorial"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="content">Content *</label>
+              <textarea
+                id="content"
+                name="content"
+                rows="20"
+                required
+                placeholder="Enter document content with markdown support..."
+              ></textarea>
+              <div class="content-help">
+                <small>
+                  <strong>Markdown Support:</strong><br />
+                  # Heading 1 | ## Heading 2 | ### Heading 3<br />
+                  **Bold** | *Italic* | `code` | ```sql code block```
+                </small>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input
+                    type="checkbox"
+                    id="is_published"
+                    name="is_published"
+                  />
+                  <span class="checkmark"></span>
+                  Publish document
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                onclick="closeDocumentModal()"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Save Document
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+      <div class="modal-content small">
+        <div class="modal-header">
+          <h2>Confirm Delete</h2>
+          <button class="close-btn" onclick="closeDeleteModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete "<span
+              id="delete-document-title"
+            ></span
+            >"?
+          </p>
+          <p class="warning">This action cannot be undone.</p>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeDeleteModal()"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn-danger" onclick="confirmDelete()">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="login-modal" class="modal">
+      <div class="modal-content small">
+        <div class="modal-header">
+          <h2>Admin Login</h2>
+        </div>
+        <div class="modal-body">
+          <form id="login-form" onsubmit="loginAdmin(event)">
+            <div class="form-group">
+              <label for="login-username">Username</label>
+              <input
+                type="text"
+                id="login-username"
+                name="username"
+                required
+                autocomplete="username"
+              />
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                onclick="navigateTo('/')"
+              >
+                <i class="fas fa-arrow-left"></i> Back to Home
+              </button>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </button>
+            </div>
+            <div
+              id="login-error"
+              style="color: #e53e3e; margin-top: 10px; display: none"
+            ></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/admin.js"></script>
+    <script>
+      // Show login modal if not authenticated
+      {% if show_login %}
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('login-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      });
+      {% endif %}
+    </script>
+  </body>
+</html>

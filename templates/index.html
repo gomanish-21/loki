@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Formatter</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <div class="header-left">
+            <button class="back-btn" onclick="navigateTo('/')">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+          </div>
+          <div class="header-center">
+            <h1><i class="fas fa-database"></i> SQL Formatter</h1>
+            <p>Beautiful formatting for SQL with history tracking</p>
+          </div>
+          <div class="header-right">
+            <!-- Refresh button removed -->
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="formatter-section">
+          <div class="controls">
+            <div class="format-type-selector">
+              <button class="format-btn active" data-type="sql">
+                <i class="fas fa-database"></i> SQL
+              </button>
+            </div>
+            <div class="indent-controls">
+              <label for="indent-size">Indent Size:</label>
+              <select id="indent-size">
+                <option value="2">2 spaces</option>
+                <option value="4">4 spaces</option>
+                <option value="8">8 spaces</option>
+              </select>
+            </div>
+            <button id="format-btn" class="primary-btn">
+              <i class="fas fa-magic"></i> Format
+            </button>
+          </div>
+
+          <div class="editor-container">
+            <div class="input-section">
+              <div class="section-header">
+                <h3><i class="fas fa-edit"></i> Input</h3>
+                <button id="clear-input" class="icon-btn" title="Clear input">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <textarea
+                id="input-text"
+                placeholder="Paste your SQL here..."
+              ></textarea>
+            </div>
+
+            <div class="output-section">
+              <div class="section-header">
+                <h3><i class="fas fa-eye"></i> Formatted Output</h3>
+                <div class="output-actions">
+                  <button
+                    id="copy-output"
+                    class="icon-btn"
+                    title="Copy to clipboard"
+                  >
+                    <i class="fas fa-copy"></i>
+                  </button>
+                  <button
+                    id="download-output"
+                    class="icon-btn"
+                    title="Download"
+                  >
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+              <pre id="output-text"></pre>
+            </div>
+          </div>
+
+          <div id="error-message" class="error-message hidden"></div>
+        </div>
+
+        <div class="history-section">
+          <div class="section-header">
+            <h3><i class="fas fa-history"></i> History</h3>
+            <button
+              id="clear-history"
+              class="danger-btn"
+              title="Clear all history"
+            >
+              <i class="fas fa-trash"></i> Clear All
+            </button>
+          </div>
+          <div id="history-list" class="history-list">
+            <div class="loading">Loading history...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- History Item Template -->
+    <template id="history-item-template">
+      <div class="history-item">
+        <div class="history-header">
+          <div class="history-meta">
+            <span class="format-type-badge"></span>
+            <span class="timestamp"></span>
+          </div>
+          <div class="history-actions">
+            <button class="load-history-btn" title="Load this content">
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button class="delete-history-btn" title="Delete from history">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="history-preview">
+          <div class="preview-content"></div>
+        </div>
+      </div>
+    </template>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>

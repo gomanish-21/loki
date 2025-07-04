@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>INFO - Loki</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/info.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <div class="header-left">
+            <button class="back-btn" onclick="navigateTo('/')">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+          </div>
+          <div class="header-center">
+            <h1><i class="fas fa-info-circle"></i> INFO</h1>
+            <p>System Information & Updates</p>
+          </div>
+          <div class="header-right">
+            <!-- Refresh button removed -->
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="info-controls">
+          <div class="category-filter">
+            <label for="category-select">Filter by Category:</label>
+            <select id="category-select" onchange="filterDocuments()">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <div class="search-box">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search documents..."
+              onkeyup="searchDocuments()"
+            />
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <div class="documents-grid" id="documents-grid">
+          <div class="loading">Loading documents...</div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title">Document Details</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-content">
+            <!-- Document content will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/info.js"></script>
+  </body>
+</html>

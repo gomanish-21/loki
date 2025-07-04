@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loki - Tools & Utilities</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/landing.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h1><i class="fas fa-tools"></i> Loki</h1>
+          <p>Tools & Utilities Collection</p>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="tools-grid">
+          <div class="tool-card" onclick="navigateTo('/sql-formatter')">
+            <div class="tool-icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <div class="tool-content">
+              <h3>SQL Formatter</h3>
+              <p>
+                Format and beautify your SQL queries with proper indentation and
+                syntax highlighting
+              </p>
+              <div class="tool-features">
+                <span class="feature-tag">Formatting</span>
+                <span class="feature-tag">History</span>
+                <span class="feature-tag">Export</span>
+              </div>
+            </div>
+            <div class="tool-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="tool-card" onclick="navigateTo('/info')">
+            <div class="tool-icon">
+              <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="tool-content">
+              <h3>INFO</h3>
+              <p>
+                View system information, project details, and important updates
+              </p>
+              <div class="tool-features">
+                <span class="feature-tag">System Info</span>
+                <span class="feature-tag">Updates</span>
+                <span class="feature-tag">Details</span>
+              </div>
+            </div>
+            <div class="tool-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="tool-card" onclick="navigateTo('/admin')">
+            <div class="tool-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <div class="tool-content">
+              <h3>Admin Panel</h3>
+              <p>
+                Manage information documents, add new content, and control
+                system settings
+              </p>
+              <div class="tool-features">
+                <span class="feature-tag">Document Management</span>
+                <span class="feature-tag">Content Editor</span>
+                <span class="feature-tag">Admin</span>
+              </div>
+            </div>
+            <div class="tool-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/landing.js"></script>
+  </body>
+</html>
