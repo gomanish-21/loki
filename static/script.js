@@ -39,6 +39,7 @@ const historyList = document.getElementById("history-list");
 const clearInputBtn = document.getElementById("clear-input");
 const copyOutputBtn = document.getElementById("copy-output");
 const downloadOutputBtn = document.getElementById("download-output");
+const expandOutputBtn = document.getElementById("expand-output");
 const clearHistoryBtn = document.getElementById("clear-history");
 
 // Initialize the application
@@ -72,11 +73,32 @@ function setupEventListeners() {
   // Download output
   downloadOutputBtn.addEventListener("click", downloadOutput);
 
+  // Expand output
+  expandOutputBtn.addEventListener("click", toggleExpandOutput);
+
   // Clear history
   clearHistoryBtn.addEventListener("click", clearHistory);
 
   // Keyboard shortcuts
   document.addEventListener("keydown", handleKeyboardShortcuts);
+}
+
+// Toggle expand/collapse of the output section
+function toggleExpandOutput() {
+  const editorContainer = document.querySelector(".editor-container");
+  const outputSection = document.querySelector(".output-section");
+
+  editorContainer.classList.toggle("expanded");
+  outputSection.classList.toggle("expanded");
+
+  const icon = expandOutputBtn.querySelector("i");
+  if (editorContainer.classList.contains("expanded")) {
+    icon.classList.remove("fa-expand-alt");
+    icon.classList.add("fa-compress-alt");
+  } else {
+    icon.classList.remove("fa-compress-alt");
+    icon.classList.add("fa-expand-alt");
+  }
 }
 
 // Handle keyboard shortcuts
