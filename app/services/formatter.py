@@ -1,4 +1,4 @@
-import sqlparse
+from sql_formatter.core import format_sql as format_sql_lib
 from datetime import datetime, timedelta
 from bson import ObjectId
 from app.config import get_collections
@@ -8,18 +8,7 @@ from app.models import FormatRequest, FormatResponse, HistoryItem
 def format_sql(content: str, indent_size: int = 2) -> str:
     """Format SQL content"""
     try:
-        return sqlparse.format(
-            content,
-            reindent=True,
-            keyword_case="upper",
-            identifier_case="lower",
-            indent_width=indent_size,
-            use_space_around_operators=True,
-            strip_comments=True,
-            truncate_strings=50,
-            indent_after_first=True,
-            wrap_after=80,
-        )
+        return format_sql_lib(content)
     except Exception as e:
         raise ValueError(f"SQL formatting error: {str(e)}")
 
