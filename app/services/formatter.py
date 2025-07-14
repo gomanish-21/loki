@@ -12,8 +12,13 @@ def format_sql(content: str, indent_size: int = 2) -> str:
             content,
             reindent=True,
             keyword_case="upper",
+            identifier_case="lower",
             indent_width=indent_size,
             use_space_around_operators=True,
+            strip_comments=True,
+            truncate_strings=50,
+            indent_after_first=True,
+            wrap_after=80,
         )
     except Exception as e:
         raise ValueError(f"SQL formatting error: {str(e)}")
