@@ -51,3 +51,8 @@ class LoginResponse(BaseModel):
 
 class LogoutResponse(BaseModel):
     message: str
+
+
+# AI SQL Analyzer
+class AnalyzeRequest(BaseModel):
+    sql: str

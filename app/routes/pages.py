@@ -36,3 +36,9 @@ async def admin_page(request: Request):
     return templates.TemplateResponse(
         "admin.html", {"request": request, "show_login": False}
     )
+
+
+@router.get("/sql-analyzer", response_class=HTMLResponse)
+async def sql_analyzer(request: Request):
+    """SQL analyzer page"""
+    return templates.TemplateResponse("analyzer.html", {"request": request})

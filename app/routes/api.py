@@ -9,6 +9,7 @@ from app.models import (
     LoginRequest,
     LoginResponse,
     LogoutResponse,
+    AnalyzeRequest,
 )
 from app.services.formatter import (
     format_content,
@@ -184,6 +185,9 @@ async def update_document_endpoint(doc_id: str, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+from app.services.gemini import analyze_sql_performance
+
+
 @router.delete("/documents/{doc_id}")
 async def delete_document_endpoint(doc_id: str):
     """Delete a document"""
@@ -191,5 +195,15 @@ async def delete_document_endpoint(doc_id: str):
         return await delete_document(doc_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/analyze-sql")
+async def analyze_sql(item: AnalyzeRequest):
+    """Analyzes SQL performance using Gemini"""
+    try:
+        analysis = await analyze_sql_performance(item.sql)
+        return {"analysis": analysis}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
